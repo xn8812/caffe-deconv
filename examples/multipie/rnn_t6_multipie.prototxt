@@ -1,0 +1,1373 @@
+name: "rotation_rnn"
+layers {
+  bottom: "images"
+  top: "ep_conv_5x5_2_0"
+  name: "conv_5x5_2_0"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "conv1_w"
+  param: "conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_2_0"
+  top: "ep_conv_5x5_2_0"
+  name: "relu_1"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_2_0"
+  top: "ep_conv_5x5_2_1"
+  name: "conv_5x5_2_2"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 128
+    pad: 2
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "conv2_w"
+  param: "conv2_b"
+}
+layers {
+  bottom: "ep_conv_5x5_2_1"
+  top: "ep_conv_5x5_2_1"
+  name: "relu_3"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_2_1"
+  top: "ep_inner_product_2"
+  name: "inner_product_4"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "fc1_w"
+  param: "fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_2"
+  top: "ep_relu_3"
+  name: "relu_5"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_3"
+  top: "ep_split_4"
+  top: "ep_split_6"
+  name: "split_6"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_4"
+  top: "ep_inner_product_5"
+  name: "inner_product_7"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "fc1_id_w"
+  param: "fc1_id_b"
+}
+layers {
+  bottom: "ep_inner_product_5"
+  top: "ep_inner_product_5"
+  name: "relu_8"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_5"
+  top: "ep_split_10"
+  top: "ep_split_24"
+  top: "ep_split_38"
+  top: "ep_split_52"
+  top: "ep_split_66"
+  top: "ep_split_80"
+  name: "split_9"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_6"
+  top: "ep_inner_product_7"
+  name: "inner_product"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "fc1_view_w"
+  param: "fc1_view_b"
+}
+layers {
+  bottom: "ep_inner_product_7"
+  top: "ep_inner_product_7"
+  name: "relu"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_7"
+  bottom: "rotations0"
+  top: "ep_tensor_product_8"
+  name: "tensor_product_10"
+  type: TENSOR_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "tensor_view_w"
+  param: "tensor_view_b"
+}
+layers {
+  bottom: "ep_tensor_product_8"
+  top: "ep_relu_9"
+  name: "relu_16"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_9"
+  top: "ep_split_11"
+  top: "ep_split_21"
+  name: "split_22"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_10"
+  bottom: "ep_split_11"
+  top: "ep_concat_12"
+  name: "concat_28"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "ep_concat_12"
+  top: "ep_inner_product_13"
+  name: "inner_product_34"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_fc1_w"
+  param: "dec_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_13"
+  top: "ep_relu_14"
+  name: "relu_40"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_14"
+  top: "ep_split_15"
+  name: "split_46"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_15"
+  top: "ep_inner_product_16"
+  name: "inner_product_52"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 38400
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_fc1_w"
+  param: "dec_img_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_16"
+  top: "ep_inner_product_16"
+  name: "relu_58"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_16"
+  top: "ep_folding_17"
+  name: "folding_64"
+  type: FOLDING
+  folding_param {
+    channels_folded: 128
+    height_folded: 20
+    width_folded: 15
+  }
+}
+layers {
+  bottom: "ep_folding_17"
+  top: "ep_upsample_18"
+  name: "upsample_70"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_18"
+  top: "ep_conv_5x5_1_19"
+  name: "conv_5x5_1_76"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv1_w"
+  param: "dec_img_conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_1_19"
+  top: "ep_conv_5x5_1_19"
+  name: "relu_82"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_1_19"
+  top: "ep_upsample_20"
+  name: "upsample_88"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_20"
+  top: "ep_t0_conv_5x5_1_91"
+  name: "t0_conv_5x5_1_94"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 3
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv2_w"
+  param: "dec_img_conv2_b"
+}
+layers {
+  bottom: "ep_split_21"
+  bottom: "rotations1"
+  top: "ep_tensor_product_22"
+  name: "tensor_product_11"
+  type: TENSOR_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "tensor_view_w"
+  param: "tensor_view_b"
+}
+layers {
+  bottom: "ep_tensor_product_22"
+  top: "ep_relu_23"
+  name: "relu_17"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_23"
+  top: "ep_split_25"
+  top: "ep_split_35"
+  name: "split_23"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_24"
+  bottom: "ep_split_25"
+  top: "ep_concat_26"
+  name: "concat_29"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "ep_concat_26"
+  top: "ep_inner_product_27"
+  name: "inner_product_35"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_fc1_w"
+  param: "dec_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_27"
+  top: "ep_relu_28"
+  name: "relu_41"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_28"
+  top: "ep_split_29"
+  name: "split_47"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_29"
+  top: "ep_inner_product_30"
+  name: "inner_product_53"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 38400
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_fc1_w"
+  param: "dec_img_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_30"
+  top: "ep_inner_product_30"
+  name: "relu_59"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_30"
+  top: "ep_folding_31"
+  name: "folding_65"
+  type: FOLDING
+  folding_param {
+    channels_folded: 128
+    height_folded: 20
+    width_folded: 15
+  }
+}
+layers {
+  bottom: "ep_folding_31"
+  top: "ep_upsample_32"
+  name: "upsample_71"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_32"
+  top: "ep_conv_5x5_1_33"
+  name: "conv_5x5_1_77"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv1_w"
+  param: "dec_img_conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_1_33"
+  top: "ep_conv_5x5_1_33"
+  name: "relu_83"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_1_33"
+  top: "ep_upsample_34"
+  name: "upsample_89"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_34"
+  top: "ep_t1_conv_5x5_1_92"
+  name: "t1_conv_5x5_1_95"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 3
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv2_w"
+  param: "dec_img_conv2_b"
+}
+layers {
+  bottom: "ep_split_35"
+  bottom: "rotations2"
+  top: "ep_tensor_product_36"
+  name: "tensor_product_12"
+  type: TENSOR_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "tensor_view_w"
+  param: "tensor_view_b"
+}
+layers {
+  bottom: "ep_tensor_product_36"
+  top: "ep_relu_37"
+  name: "relu_18"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_37"
+  top: "ep_split_39"
+  top: "ep_split_49"
+  name: "split_24"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_38"
+  bottom: "ep_split_39"
+  top: "ep_concat_40"
+  name: "concat_30"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "ep_concat_40"
+  top: "ep_inner_product_41"
+  name: "inner_product_36"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_fc1_w"
+  param: "dec_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_41"
+  top: "ep_relu_42"
+  name: "relu_42"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_42"
+  top: "ep_split_43"
+  name: "split_48"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_43"
+  top: "ep_inner_product_44"
+  name: "inner_product_54"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 38400
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_fc1_w"
+  param: "dec_img_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_44"
+  top: "ep_inner_product_44"
+  name: "relu_60"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_44"
+  top: "ep_folding_45"
+  name: "folding_66"
+  type: FOLDING
+  folding_param {
+    channels_folded: 128
+    height_folded: 20
+    width_folded: 15
+  }
+}
+layers {
+  bottom: "ep_folding_45"
+  top: "ep_upsample_46"
+  name: "upsample_72"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_46"
+  top: "ep_conv_5x5_1_47"
+  name: "conv_5x5_1_78"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv1_w"
+  param: "dec_img_conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_1_47"
+  top: "ep_conv_5x5_1_47"
+  name: "relu_84"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_1_47"
+  top: "ep_upsample_48"
+  name: "upsample_90"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_48"
+  top: "ep_t2_conv_5x5_1_93"
+  name: "t2_conv_5x5_1_96"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 3
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv2_w"
+  param: "dec_img_conv2_b"
+}
+layers {
+  bottom: "ep_split_49"
+  bottom: "rotations3"
+  top: "ep_tensor_product_50"
+  name: "tensor_product_13"
+  type: TENSOR_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "tensor_view_w"
+  param: "tensor_view_b"
+}
+layers {
+  bottom: "ep_tensor_product_50"
+  top: "ep_relu_51"
+  name: "relu_19"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_51"
+  top: "ep_split_53"
+  top: "ep_split_63"
+  name: "split_25"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_52"
+  bottom: "ep_split_53"
+  top: "ep_concat_54"
+  name: "concat_31"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "ep_concat_54"
+  top: "ep_inner_product_55"
+  name: "inner_product_37"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_fc1_w"
+  param: "dec_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_55"
+  top: "ep_relu_56"
+  name: "relu_43"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_56"
+  top: "ep_split_57"
+  name: "split_49"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_57"
+  top: "ep_inner_product_58"
+  name: "inner_product_55"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 38400
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_fc1_w"
+  param: "dec_img_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_58"
+  top: "ep_inner_product_58"
+  name: "relu_61"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_58"
+  top: "ep_folding_59"
+  name: "folding_67"
+  type: FOLDING
+  folding_param {
+    channels_folded: 128
+    height_folded: 20
+    width_folded: 15
+  }
+}
+layers {
+  bottom: "ep_folding_59"
+  top: "ep_upsample_60"
+  name: "upsample_73"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_60"
+  top: "ep_conv_5x5_1_61"
+  name: "conv_5x5_1_79"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv1_w"
+  param: "dec_img_conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_1_61"
+  top: "ep_conv_5x5_1_61"
+  name: "relu_85"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_1_61"
+  top: "ep_upsample_62"
+  name: "upsample_91"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_62"
+  top: "ep_t3_conv_5x5_1_94"
+  name: "t3_conv_5x5_1_97"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 3
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv2_w"
+  param: "dec_img_conv2_b"
+}
+layers {
+  bottom: "ep_split_63"
+  bottom: "rotations4"
+  top: "ep_tensor_product_64"
+  name: "tensor_product_14"
+  type: TENSOR_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "tensor_view_w"
+  param: "tensor_view_b"
+}
+layers {
+  bottom: "ep_tensor_product_64"
+  top: "ep_relu_65"
+  name: "relu_20"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_65"
+  top: "ep_split_67"
+  top: "ep_split_77"
+  name: "split_26"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_66"
+  bottom: "ep_split_67"
+  top: "ep_concat_68"
+  name: "concat_32"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "ep_concat_68"
+  top: "ep_inner_product_69"
+  name: "inner_product_38"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_fc1_w"
+  param: "dec_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_69"
+  top: "ep_relu_70"
+  name: "relu_44"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_70"
+  top: "ep_split_71"
+  name: "split_50"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_71"
+  top: "ep_inner_product_72"
+  name: "inner_product_56"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 38400
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_fc1_w"
+  param: "dec_img_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_72"
+  top: "ep_inner_product_72"
+  name: "relu_62"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_72"
+  top: "ep_folding_73"
+  name: "folding_68"
+  type: FOLDING
+  folding_param {
+    channels_folded: 128
+    height_folded: 20
+    width_folded: 15
+  }
+}
+layers {
+  bottom: "ep_folding_73"
+  top: "ep_upsample_74"
+  name: "upsample_74"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_74"
+  top: "ep_conv_5x5_1_75"
+  name: "conv_5x5_1_80"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv1_w"
+  param: "dec_img_conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_1_75"
+  top: "ep_conv_5x5_1_75"
+  name: "relu_86"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_1_75"
+  top: "ep_upsample_76"
+  name: "upsample_92"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_76"
+  top: "ep_t4_conv_5x5_1_95"
+  name: "t4_conv_5x5_1_98"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 3
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv2_w"
+  param: "dec_img_conv2_b"
+}
+layers {
+  bottom: "ep_split_77"
+  bottom: "rotations5"
+  top: "ep_tensor_product_78"
+  name: "tensor_product_15"
+  type: TENSOR_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "tensor_view_w"
+  param: "tensor_view_b"
+}
+layers {
+  bottom: "ep_tensor_product_78"
+  top: "ep_relu_79"
+  name: "relu_21"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_79"
+  top: "ep_split_81"
+  name: "split_27"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_80"
+  bottom: "ep_split_81"
+  top: "ep_concat_82"
+  name: "concat_33"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  bottom: "ep_concat_82"
+  top: "ep_inner_product_83"
+  name: "inner_product_39"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_fc1_w"
+  param: "dec_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_83"
+  top: "ep_relu_84"
+  name: "relu_45"
+  type: RELU
+}
+layers {
+  bottom: "ep_relu_84"
+  top: "ep_split_85"
+  name: "split_51"
+  type: SPLIT
+}
+layers {
+  bottom: "ep_split_85"
+  top: "ep_inner_product_86"
+  name: "inner_product_57"
+  type: INNER_PRODUCT
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  inner_product_param {
+    num_output: 38400
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_fc1_w"
+  param: "dec_img_fc1_b"
+}
+layers {
+  bottom: "ep_inner_product_86"
+  top: "ep_inner_product_86"
+  name: "relu_63"
+  type: RELU
+}
+layers {
+  bottom: "ep_inner_product_86"
+  top: "ep_folding_87"
+  name: "folding_69"
+  type: FOLDING
+  folding_param {
+    channels_folded: 128
+    height_folded: 20
+    width_folded: 15
+  }
+}
+layers {
+  bottom: "ep_folding_87"
+  top: "ep_upsample_88"
+  name: "upsample_75"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_88"
+  top: "ep_conv_5x5_1_89"
+  name: "conv_5x5_1_81"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 64
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv1_w"
+  param: "dec_img_conv1_b"
+}
+layers {
+  bottom: "ep_conv_5x5_1_89"
+  top: "ep_conv_5x5_1_89"
+  name: "relu_87"
+  type: RELU
+}
+layers {
+  bottom: "ep_conv_5x5_1_89"
+  top: "ep_upsample_90"
+  name: "upsample_93"
+  type: UPSAMPLING
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  bottom: "ep_upsample_90"
+  top: "ep_t5_conv_5x5_1_96"
+  name: "t5_conv_5x5_1_99"
+  type: CONVOLUTION
+  blobs_lr: 1
+  blobs_lr: 2
+  weight_decay: 1
+  weight_decay: 0
+  convolution_param {
+    num_output: 3
+    pad: 2
+    kernel_size: 5
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+  }
+  param: "dec_img_conv2_w"
+  param: "dec_img_conv2_b"
+}
+layers {
+  bottom: "ep_t0_conv_5x5_1_91"
+  bottom: "ep_t1_conv_5x5_1_92"
+  bottom: "ep_t2_conv_5x5_1_93"
+  bottom: "ep_t3_conv_5x5_1_94"
+  bottom: "ep_t4_conv_5x5_1_95"
+  bottom: "ep_t5_conv_5x5_1_96"
+  top: "images_concat"
+  name: "concat_100"
+  type: CONCAT
+  concat_param {
+    concat_dim: 1
+  }
+  loss_weight: 1.0
+}
+input: "images"
+input: "rotations0"
+input: "rotations1"
+input: "rotations2"
+input: "rotations3"
+input: "rotations4"
+input: "rotations5"
+input_dim: 1
+input_dim: 3
+input_dim: 80
+input_dim: 60
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+force_backward: true

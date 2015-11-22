@@ -1,0 +1,148 @@
+name: "cnn"
+input: "images"
+input_dim: 100
+input_dim: 3
+input_dim: 80
+input_dim: 60
+#----------------------------encoder-conv---------------------------
+layers {
+  name: "conv1-encoder"
+  type: CONVOLUTION
+  bottom: "images"
+  top: "conv1-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-encoder"
+  type: RELU
+  bottom: "conv1-encoder"
+  top: "conv1-encoder"
+}
+layers {
+  name: "dp1-encoder"
+  type: POOLING
+  bottom: "conv1-encoder"
+  top: "dp1-encoder"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layers {
+  name: "conv2-encoder"
+  type: CONVOLUTION
+  bottom: "dp1-encoder"
+  top: "conv2-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu2-encoder"
+  type: RELU
+  bottom: "conv2-encoder"
+  top: "conv2-encoder"
+}
+layers {
+  name: "dp2-encoder"
+  type: POOLING
+  bottom: "conv2-encoder"
+  top: "dp2-encoder"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layers {
+  name: "ip1-encoder"
+  type: INNER_PRODUCT
+  bottom: "dp2-encoder"
+  top: "ip1-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu3-encoder"
+  type: RELU
+  bottom: "ip1-encoder"
+  top: "ip1-encoder"
+}
+#-------------------------encoder-id----------------------------
+layers {
+  name: "ip2-id-encoder"
+  type: INNER_PRODUCT
+  bottom: "ip1-encoder"
+  top: "ip2-id-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu4-id-encoder"
+  type: RELU
+  bottom: "ip2-id-encoder"
+  top: "ip2-id-encoder"
+}
+#-------------------------encoder-clf----------------------------
+layers {
+  name: "ip3-id-encoder"
+  type: INNER_PRODUCT
+  bottom: "ip2-id-encoder"
+  top: "ip3-id-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 200
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  loss_weight: 1.0
+}

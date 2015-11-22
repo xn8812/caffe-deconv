@@ -1,0 +1,35 @@
+name: "clf-pascal"
+
+input: "feats"
+input_dim: 256
+input_dim: 5568
+input_dim: 1
+input_dim: 1
+
+layers {
+  name: "clf"
+  type: INNER_PRODUCT
+  bottom: "feats"
+  top: "clf"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 21
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layers {
+  name: "pred"
+  type: SIGMOID
+  bottom: "clf"
+  top: "pred"
+  loss_weight: 1.0
+}
+

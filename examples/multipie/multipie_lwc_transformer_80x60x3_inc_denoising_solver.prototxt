@@ -1,0 +1,17 @@
+# The training protocol buffer definition
+train_net: "examples/multipie/multipie_lwc_transformer_80x60x3_inc_test.prototxt"
+# The base learning rate, momentum and the weight decay of the network.
+base_lr: 0.000001
+# The learning rate policy
+lr_policy: "step"
+gamma: 0.100000
+stepsize: 100000
+# Display every 200 iterations
+display: 200
+# The maximum number of iterations
+max_iter: 600000
+# snapshot intermediate results
+snapshot: 100000
+snapshot_prefix: "examples/multipie/lwc_transformer"
+# solver mode: 0 for CPU and 1 for GPU
+solver_mode: 1

@@ -1,0 +1,347 @@
+name: "conv-transformer"
+input: "images"
+input_dim: 1
+input_dim: 3
+input_dim: 80
+input_dim: 60
+input: "rotations"
+input_dim: 1
+input_dim: 3
+input_dim: 1
+input_dim: 1
+#----------------------------encoder-conv---------------------------
+layers {
+  name: "conv1-encoder"
+  type: CONVOLUTION
+  bottom: "images"
+  top: "conv1-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-encoder"
+  type: RELU
+  bottom: "conv1-encoder"
+  top: "conv1-encoder"
+}
+layers {
+  name: "dp1-encoder"
+  type: DOWNSAMPLING
+  bottom: "conv1-encoder"
+  top: "dp1-encoder"
+  downsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv2-encoder"
+  type: CONVOLUTION
+  bottom: "dp1-encoder"
+  top: "conv2-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu2-encoder"
+  type: RELU
+  bottom: "conv2-encoder"
+  top: "conv2-encoder"
+}
+layers {
+  name: "dp2-encoder"
+  type: DOWNSAMPLING
+  bottom: "conv2-encoder"
+  top: "dp2-encoder"
+  downsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "ip1-encoder"
+  type: INNER_PRODUCT
+  bottom: "dp2-encoder"
+  top: "ip1-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 2048
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu3-encoder"
+  type: RELU
+  bottom: "ip1-encoder"
+  top: "ip1-encoder"
+}
+#-------------------------encoder-id----------------------------
+layers {
+  name: "ip2-id-encoder"
+  type: INNER_PRODUCT
+  bottom: "ip1-encoder"
+  top: "ip2-id-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu4-id-encoder"
+  type: RELU
+  bottom: "ip2-id-encoder"
+  top: "ip2-id-encoder"
+}
+layers {
+  name: "ip3-id-encoder"
+  type: INNER_PRODUCT
+  bottom: "ip2-id-encoder"
+  top: "ip3-id-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu5-id-encoder"
+  type: RELU
+  bottom: "ip3-id-encoder"
+  top: "ip3-id-encoder"
+}
+#-------------------------encoder-view----------------------------
+layers {
+  name: "ip2-view-encoder"
+  type: INNER_PRODUCT
+  bottom: "ip1-encoder"
+  top: "ip2-view-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "relu4-view-encoder"
+  type: RELU
+  bottom: "ip2-view-encoder"
+  top: "ip2-view-encoder"
+}
+layers {
+  name: "ip3-view-encoder"
+  type: TENSOR_PRODUCT
+  bottom: "ip2-view-encoder"
+  bottom: "rotations"
+  top: "ip3-view-encoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 128
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "relu5-view-encoder"
+  type: RELU
+  bottom: "ip3-view-encoder"
+  top: "ip3-view-encoder"
+}
+#--------------------------concat-view-id------------------------
+layers {
+  name: "concat-encoder"
+  type: CONCAT
+  bottom: "ip3-id-encoder"
+  bottom: "ip3-view-encoder"
+  top: "concat-encoder"
+  concat_param {
+    concat_dim: 1
+  }
+}
+#===========================decoder============================
+#-------------------------decoder-ip---------------------------
+layers {
+  name: "ip2-decoder"
+  type: INNER_PRODUCT
+  bottom: "concat-encoder"
+  top: "ip2-decoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 2048 
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "relu1-decoder"
+  type: RELU
+  bottom: "ip2-decoder"
+  top: "ip2-decoder"
+}
+#--------------------------decoder-conv-------------------------
+layers {
+  name: "ip1-decoder"
+  type: INNER_PRODUCT
+  bottom: "ip2-decoder"
+  top: "ip1-decoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 19200 
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "relu3-decoder"
+  type: RELU
+  bottom: "ip1-decoder"
+  top: "ip1-decoder"
+}
+layers {
+  name: "fold-decoder"
+  type: FOLDING
+  bottom: "ip1-decoder"
+  top: "fold-decoder"
+  folding_param {
+    channels_folded: 64
+    height_folded: 20
+    width_folded: 15
+  }
+}
+#----------------------------decoder-conv-1---------------------------
+layers {
+  name: "up2-decoder"
+  type: UPSAMPLING
+  bottom: "fold-decoder"
+  top: "up2-decoder"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv2-decoder"
+  type: CONVOLUTION
+  bottom: "up2-decoder"
+  top: "conv2-decoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu2-decoder"
+  type: RELU
+  bottom: "conv2-decoder"
+  top: "conv2-decoder"
+}
+layers {
+  name: "up1-decoder"
+  type: UPSAMPLING
+  bottom: "conv2-decoder"
+  top: "up1-decoder"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv1-decoder"
+  type: CONVOLUTION
+  bottom: "up1-decoder"
+  top: "conv1-decoder"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 3
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-decoder"
+  type: RELU
+  bottom: "conv1-decoder"
+  top: "conv1-decoder"
+  loss_weight: 1.0
+}

@@ -1,0 +1,379 @@
+name: "chairs_generator"
+input: "labels-id"
+input_dim: 100
+input_dim: 809
+input_dim: 1
+input_dim: 1
+input: "labels-view"
+input_dim: 100
+input_dim: 4
+input_dim: 1
+input_dim: 1
+layers {
+  name: "fc1-id"
+  type: INNER_PRODUCT
+  bottom: "labels-id"
+  top: "fc1-id"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-id"
+  type: RELU
+  bottom: "fc1-id"
+  top: "fc1-id"
+}
+layers {
+  name: "fc1-view"
+  type: INNER_PRODUCT
+  bottom: "labels-view"
+  top: "fc1-view"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-view"
+  type: RELU
+  bottom: "fc1-view"
+  top: "fc1-view"
+}
+layers {
+  name: "concat"
+  type: CONCAT
+  bottom: "fc1-id"
+  bottom: "fc1-view"
+  top: "concat"
+  concat_param {
+    concat_dim: 1
+  }
+}
+layers {
+  name: "fc2"
+  type: INNER_PRODUCT
+  bottom: "concat"
+  top: "fc2"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu2"
+  type: RELU
+  bottom: "fc2"
+  top: "fc2"
+}
+layers {
+  name: "fc3"
+  type: INNER_PRODUCT
+  bottom: "fc2"
+  top: "fc3"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 1024
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu3"
+  type: RELU
+  bottom: "fc3"
+  top: "fc3"
+}
+#----------------------------image-fc---------------------------
+layers {
+  name: "fc4-image"
+  type: INNER_PRODUCT
+  bottom: "fc3"
+  top: "fc4-image"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 8192
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "fold-image"
+  type: FOLDING
+  bottom: "fc4-image"
+  top: "fold-image"
+  folding_param {
+    channels_folded: 128
+    height_folded: 8
+    width_folded: 8
+  }
+}
+#----------------------------image-upsampling-16x16-convolution-relu-layer-1---------------------------
+layers {
+  name: "up1-image"
+  type: UPSAMPLING
+  bottom: "fold-image"
+  top: "up1-image"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv1-image"
+  type: CONVOLUTION
+  bottom: "up1-image"
+  top: "conv1-image"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 128
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-image"
+  type: RELU
+  bottom: "conv1-image"
+  top: "conv1-image"
+}
+#----------------------------image-upsampling-32x32-convolution-relu-layer-2---------------------------
+layers {
+  name: "up2-image"
+  type: UPSAMPLING
+  bottom: "conv1-image"
+  top: "up2-image"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv2-image"
+  type: CONVOLUTION
+  bottom: "up2-image"
+  top: "conv2-image"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu2-image"
+  type: RELU
+  bottom: "conv2-image"
+  top: "conv2-image"
+}
+#----------------------------image-upsampling-64x64-convolution-relu-layer-3---------------------------
+layers {
+  name: "up3-image"
+  type: UPSAMPLING
+  bottom: "conv2-image"
+  top: "up3-image"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv3-image"
+  type: CONVOLUTION
+  bottom: "up3-image"
+  top: "conv3-image"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 3
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+  loss_weight: 10.0
+}
+#----------------------------mask-fc---------------------------
+layers {
+  name: "fc4-mask"
+  type: INNER_PRODUCT
+  bottom: "fc3"
+  top: "fc4-mask"
+  blobs_lr: 1
+  blobs_lr: 2
+  inner_product_param {
+    num_output: 4096
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layers {
+  name: "fold-mask"
+  type: FOLDING
+  bottom: "fc4-mask"
+  top: "fold-mask"
+  folding_param {
+    channels_folded: 64
+    height_folded: 8
+    width_folded: 8
+  }
+}
+#----------------------------mask-upsampling-16x16-convolution-relu-layer-1---------------------------
+layers {
+  name: "up1-mask"
+  type: UPSAMPLING
+  bottom: "fold-mask"
+  top: "up1-mask"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv1-mask"
+  type: CONVOLUTION
+  bottom: "up1-mask"
+  top: "conv1-mask"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 64
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu1-mask"
+  type: RELU
+  bottom: "conv1-mask"
+  top: "conv1-mask"
+}
+#----------------------------mask-upsampling-32x32-convolution-relu-layer-2---------------------------
+layers {
+  name: "up2-mask"
+  type: UPSAMPLING
+  bottom: "conv1-mask"
+  top: "up2-mask"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv2-mask"
+  type: CONVOLUTION
+  bottom: "up2-mask"
+  top: "conv2-mask"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 32
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+layers {
+  name: "relu2-mask"
+  type: RELU
+  bottom: "conv2-mask"
+  top: "conv2-mask"
+}
+#----------------------------mask-upsampling-64x64-convolution-relu-layer-3---------------------------
+layers {
+  name: "up3-mask"
+  type: UPSAMPLING
+  bottom: "conv2-mask"
+  top: "up3-mask"
+  upsampling_param {
+    kernel_size: 2
+  }
+}
+layers {
+  name: "conv3-mask"
+  type: CONVOLUTION
+  bottom: "up3-mask"
+  top: "conv3-mask"
+  blobs_lr: 1
+  blobs_lr: 2
+  convolution_param {
+    num_output: 1
+    kernel_size: 5
+    pad: 2
+    stride: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+  loss_weight: 1.0
+}
